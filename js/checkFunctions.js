@@ -9,13 +9,16 @@ const isEqualFields = (field1, field2, textError) => {
 };
 
 const isValidAge = (birthday) => {
-    let d = new Date();
-    d = d.setYear(d.getFullYear() - 18);
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 18);
+
     if (birthday.value && (d < new Date(birthday.value))) {
         addDivError(birthday, "Регистрация только с 18 лет");
         return false;
+    } else {
+        addDivError(birthday, "");
+        return true;
     }
-    return true;
 };
 
 const isValidEmail = (email) => {

@@ -13,7 +13,7 @@ const validateAll = () => {
 
     let isValid = true;
     // очистить все поля
-    [].forEach.call(document.getElementsByClassName("form__error"), (elem) => elem.innerHTML = "");
+    // [].forEach.call(document.querySelectorAll("form__error"), (elem) => elem.innerHTML = "");
 
     // поля, обязательные для заполнения
     const chekedValuesAll = document.getElementsByClassName("isRequered");
@@ -70,6 +70,9 @@ const checkOnline = (event) => {
         case "idPasswordCheck":
             isEqualFields(document.getElementById('idPassword'), document.getElementById('idPasswordCheck'), "Пароль не совпадает")
             break;
+        case "idBirthDay":
+            isValidAge(event.target);
+            break;
         default:
             addDivError(event.target, "");
 
@@ -83,3 +86,4 @@ buttonSubmit.addEventListener("click", validateAll);
 
 const login = document.getElementById('formRegistration');
 login.addEventListener("keyup", checkOnline);
+login.addEventListener("change", checkOnline);
