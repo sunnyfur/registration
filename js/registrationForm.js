@@ -2,53 +2,50 @@ const getErrorDiv = (elem) => {
     let rez = elem.parentElement.querySelector(".form__error");
     if (!rez) rez = elem.parentElement.parentElement.querySelector(".form__error");
     return rez;
-}
+};
 
 const addDivError = (elem, message) => {
+    getErrorDiv(elem).innerHTML = message;
+};
 
-    getErrorDiv(elem).innerHTML += message + '\n';
-}
 
 const validateAll = () => {
 
     let isValid = true;
     // очистить все поля
     [].forEach.call(document.getElementsByClassName("form__error"), (elem) => elem.innerHTML = "");
+
     // поля, обязательные для заполнения
     const chekedValuesAll = document.getElementsByClassName("isRequered");
-
     for (let i = 0; i < chekedValuesAll.length; i++) {
         if (!chekedValuesAll[i].value) {
             addDivError(chekedValuesAll[i], "Поле обязательно для заполнения");
             isValid = false;
         }
     }
-    let d = new Date();
-    d = d.setYear(d.getFullYear() - 18);
-    console.log(d);
 
-    if (document.getElementById('idBirthDay').value && (d < new Date(document.getElementById('idBirthDay').value))) {
-        addDivError(document.getElementById('idBirthDay'), "Регистрация только с 18 лет");
-    }
+    if (!isValidAge(document.getElementById('idBirthDay'))) isValid = false;
 
     if (!document.querySelector('input[name="nameGender"]:checked')) {
         addDivError(document.querySelector('input[name="nameGender"'), "Поле обязательно для заполнения");
-    }
-
-
-    if (document.getElementById('idEmail').value != document.getElementById('idEmailCheck').value) {
-        addDivError(document.getElementById('idEmailCheck'), "E-mail не совпадает");
         isValid = false;
     }
-    if (document.getElementById('idPassword').value != document.getElementById('idPasswordCheck').value) {
-        addDivError(document.getElementById('idPasswordCheck'), "Пароль не совпадает");
+    if (!isValidEmail(document.getElementById('idEmail'))) {
         isValid = false;
+    } else {
+        if (!isEqualFields(document.getElementById('idEmail'), document.getElementById('idEmailCheck'), "E-mail не совпадает")) isValid = false;
+    }
+
+    if (!isValidPass(document.getElementById('idPassword'))) {
+        isValid = false;
+    } else {
+        if (!isEqualFields(document.getElementById('idPassword'), document.getElementById('idPasswordCheck'), "Пароль не совпадает")) isValid = false;
     }
 
     if (!document.getElementById('idPrivacy').checked) {
         addDivError(document.getElementById('idPrivacy'), "Нужно принять политику конфиденциальности");
+        isValid = false;
     };
-
 
     if (isValid) {
         alert(`Добро пожаловать, ${document.getElementById('idLogin').value}`);
@@ -59,13 +56,24 @@ const validateAll = () => {
 }
 
 const checkOnline = (event) => {
-    // alert(event.target.value);
 
+    switch (event.target.id) {
+        case "idEmail":
+            isValidEmail(event.target);
+            break;
+        case "idEmailCheck":
+            isEqualFields(document.getElementById('idEmail'), document.getElementById('idEmailCheck'), "E-mail не совпадает")
+            break;
+        case "idPassword":
+            isValidPass(event.target);
+            break;
+        case "idPasswordCheck":
+            isEqualFields(document.getElementById('idPassword'), document.getElementById('idPasswordCheck'), "Пароль не совпадает")
+            break;
+        default:
+            addDivError(event.target, "");
 
-    if (event.target.value != "") {
-        getErrorDiv(event.target).innerHTML = "";
-    };
-
+    }
 }
 
 const buttonSubmit = document.getElementById("idSubmitRegistration");
