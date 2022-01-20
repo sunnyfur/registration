@@ -8,46 +8,29 @@ const addDivError = (elem, message) => {
     getErrorDiv(elem).innerHTML = message;
 };
 
-
 const validateAll = () => {
 
-    let isValid = true;
-    // очистить все поля
-    // [].forEach.call(document.querySelectorAll("form__error"), (elem) => elem.innerHTML = "");
+    let isValid = 0;
 
-    // поля, обязательные для заполнения
     const chekedValuesAll = document.getElementsByClassName("isRequered");
     for (let i = 0; i < chekedValuesAll.length; i++) {
-        if (!chekedValuesAll[i].value) {
-            addDivError(chekedValuesAll[i], "Поле обязательно для заполнения");
-            isValid = false;
-        }
+        isValid += checkField(chekedValuesAll[i]);
     }
+    isValid += checkField(document.getElementById('idPrivacy'));
 
-    if (!isValidAge(document.getElementById('idBirthDay'))) isValid = false;
 
     if (!document.querySelector('input[name="nameGender"]:checked')) {
         addDivError(document.querySelector('input[name="nameGender"'), "Поле обязательно для заполнения");
         isValid = false;
     }
-    if (!isValidEmail(document.getElementById('idEmail'))) {
-        isValid = false;
-    } else {
-        if (!isEqualFields(document.getElementById('idEmail'), document.getElementById('idEmailCheck'), "E-mail не совпадает")) isValid = false;
-    }
 
-    if (!isValidPass(document.getElementById('idPassword'))) {
-        isValid = false;
-    } else {
-        if (!isEqualFields(document.getElementById('idPassword'), document.getElementById('idPasswordCheck'), "Пароль не совпадает")) isValid = false;
-    }
+    isValid += checkField(document.getElementById('idBirthDay'));
+    isValid += checkField(document.getElementById('idEmail'));
+    isValid += checkField(document.getElementById('idEmailCheck'));
+    isValid += checkField(document.getElementById('idPassword'));
+    isValid += checkField(document.getElementById('idPasswordCheck'));
 
-    if (!document.getElementById('idPrivacy').checked) {
-        addDivError(document.getElementById('idPrivacy'), "Нужно принять политику конфиденциальности");
-        isValid = false;
-    };
-
-    if (isValid) {
+    if (isValid == 0) {
         alert(`Добро пожаловать, ${document.getElementById('idLogin').value}`);
     } else {
         alert('Не все поля заполнены корректно!');
@@ -55,35 +38,49 @@ const validateAll = () => {
 
 }
 
-const checkOnline = (event) => {
-
-    switch (event.target.id) {
+const checkField = (field) => {
+    let numerr = 0;
+    switch (field.id) {
         case "idEmail":
-            isValidEmail(event.target);
+            numerr += !isValidEmail(field);
             break;
         case "idEmailCheck":
-            isEqualFields(document.getElementById('idEmail'), document.getElementById('idEmailCheck'), "E-mail не совпадает")
+            numerr += !isEqualFields(document.getElementById('idEmail'), document.getElementById('idEmailCheck'), "E-mail не совпадает")
             break;
         case "idPassword":
-            isValidPass(event.target);
+            numerr += !isValidPass(field);
             break;
         case "idPasswordCheck":
-            isEqualFields(document.getElementById('idPassword'), document.getElementById('idPasswordCheck'), "Пароль не совпадает")
+            numerr += !isEqualFields(document.getElementById('idPassword'), document.getElementById('idPasswordCheck'), "Пароль не совпадает")
             break;
         case "idBirthDay":
-            isValidAge(event.target);
+            numerr += !isValidAge(field);
+            break;
+        case "idPrivacy":
+            if (field.checked) {
+                addDivError(field, "");
+            } else {
+                numerr++;
+                addDivError(field, "Нужно принять политику конфиденциальности");
+            };
             break;
         default:
-            addDivError(event.target, "");
+            addDivError(field, "");
 
     }
-}
+    if (!field.value && field.classList.contains("isRequered")) {
+        numerr++;
+        addDivError(field, "Поле обязательно для заполнения");
+    };
+
+    return numerr;
+};
+
 
 const buttonSubmit = document.getElementById("idSubmitRegistration");
 buttonSubmit.addEventListener("click", validateAll);
 
 
-
 const login = document.getElementById('formRegistration');
-login.addEventListener("keyup", checkOnline);
-login.addEventListener("change", checkOnline);
+login.addEventListener("keyup", (event) => checkField(event.target));
+login.addEventListener("change", (event) => checkField(event.target));
