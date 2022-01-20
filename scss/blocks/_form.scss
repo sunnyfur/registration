@@ -1,0 +1,27 @@
+// .form {
+//     display: flex;
+//     flex-direction: column;
+//     width: 50vw;
+//     margin: auto;
+//     row-gap: 20px;
+//     padding-bottom: 50px;
+
+
+
+
+
+// }
+.form__fieldset {
+    display: flex;
+    flex-direction: column;
+    height: 4rem;
+    margin-bottom: 50px;
+    // border: 0;
+
+}
+
+.form__fieldset_inline {
+    display: flex;
+    flex-direction: row;
+    column-gap: 10px;
+}
